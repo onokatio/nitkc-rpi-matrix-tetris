@@ -16,29 +16,18 @@ static void InterruptHandler(int signo) {
 
 static void DrawOnCanvas(Canvas *canvas) {
   int x,y;
-  canvas->Fill(0, 0, 0);
 
 	while(!interrupt_received){
-	  for(x=0;x < canvas->width(); x++){
- 		  for(y=0;y < canvas->height(); y++){
-  			canvas->Fill(0, 0, 0);
- 	 	    canvas->SetPixel(x,y,255, 255, 255);
- 	 	    usleep(1 * 1000 * 10);  // wait a little to slow down things.
- 	 	  }
-			x++;
- 		  for(;y > -1; y--){
-  			canvas->Fill(0, 0, 0);
- 	 	    canvas->SetPixel(x,y,255, 255, 255);
- 	 	    usleep(1 * 1000 * 10);  // wait a little to slow down things.
-			}
- 	 	}
-  	canvas->Fill(0, 0, 0);
+ 	 	    canvas->SetPixel(1,1,255, 255, 255);
+ 	 	    usleep(1 * 1000 * 10);
+ 	 	    canvas->SetPixel(1,1,0, 0, 0);
+ 	 	    usleep(1 * 1000 * 10);
 	}
 }
 
 int main(int argc, char *argv[]) {
   RGBMatrix::Options defaults;
-  defaults.hardware_mapping = "regular";  // or e.g. "adafruit-hat"
+  defaults.hardware_mapping = "regular";
   defaults.rows = 32;
   defaults.chain_length = 1;
   defaults.parallel = 1;
