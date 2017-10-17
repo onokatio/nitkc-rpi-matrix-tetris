@@ -5,9 +5,22 @@
 #include <stdio.h>
 #include <signal.h>
 
+#define FallblockX 3
+#define FallblockY 3
+
 using rgb_matrix::GPIO;
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
+
+class Fallblock{
+	private:
+		int x,y;
+		int map[FallblockX][FallblockY] {};
+	public:
+		void showMap(){
+			for
+		}
+};
 
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
@@ -19,9 +32,9 @@ static void DrawOnCanvas(Canvas *canvas) {
 
 	while(!interrupt_received){
  	 	    canvas->SetPixel(1,1,255, 255, 255);
- 	 	    usleep(1 * 1000 * 10);
+ 	 	    usleep(1 * 1000 * 1000);
  	 	    canvas->SetPixel(1,1,0, 0, 0);
- 	 	    usleep(1 * 1000 * 10);
+ 	 	    usleep(1 * 1000 * 1000);
 	}
 }
 
