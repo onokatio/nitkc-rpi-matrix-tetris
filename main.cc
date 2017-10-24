@@ -4,21 +4,32 @@
 #include <math.h>
 #include <stdio.h>
 #include <signal.h>
+#include <vector>
+#include <iostream>
 
-#define FallblockX 3
-#define FallblockY 3
-
+using namespace std;
 using rgb_matrix::GPIO;
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
 
-class Fallblock{
+class Fallblock {
 	private:
-		int x,y;
-		int map[FallblockX][FallblockY] {};
 	public:
-		void showMap(){
-			for
+		const static int width = 3;
+		const static int height = 3;
+		int x,y;
+		vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
+};
+class Tetris {
+	private:
+	public:
+		const static int width = 32;
+		const static int height = 32;
+		vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
+		Fallblock *fall = new Fallblock;
+		Tetris(){
+			fall->map[0][0] = 1;
+			cout << 1;
 		}
 };
 
@@ -31,9 +42,9 @@ static void DrawOnCanvas(Canvas *canvas) {
   int x,y;
 
 	while(!interrupt_received){
- 	 	    canvas->SetPixel(1,1,255, 255, 255);
+ 	 	    canvas->SetPixel(0,0,255, 255, 255);
  	 	    usleep(1 * 1000 * 1000);
- 	 	    canvas->SetPixel(1,1,0, 0, 0);
+ 	 	    canvas->SetPixel(0,0,0, 0, 0);
  	 	    usleep(1 * 1000 * 1000);
 	}
 }
@@ -44,7 +55,7 @@ int main(int argc, char *argv[]) {
   defaults.rows = 32;
   defaults.chain_length = 1;
   defaults.parallel = 1;
-  defaults.show_refresh_rate = true;
+  //defaults.show_refresh_rate = true;
   Canvas *canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
   if (canvas == NULL)
     return 1;
