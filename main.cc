@@ -1,5 +1,6 @@
 #include "led-matrix.h"
 #include "threaded-canvas-manipulator.h"
+#include "niusb6501.h"
 
 #include <unistd.h>
 #include <math.h>
@@ -28,6 +29,8 @@ class Fallblock {
 			createBlock();
 		}
 		void createBlock(){
+			x = 0;
+			y = 0;
 			this->map[0][0] = 1; this->map[1][0] = 1; this->map[2][0] = 1;
 			this->map[0][1] = 0; this->map[1][1] = 1; this->map[2][1] = 0;
 			this->map[0][2] = 0; this->map[1][2] = 1; this->map[2][2] = 0;
@@ -62,8 +65,9 @@ class Tetris : public ThreadedCanvasManipulator {
 		}
 		void half_sec(){
 			if( frame > 10 ){
-				if(fall->y+3 < height) fall->y++;
-				fall->roll90();
+				//if(fall->y+3 < height) fall->y++;
+				checkFall();
+				//fall->roll90();
 				frame = 0;
 			}
 		}
@@ -84,17 +88,20 @@ class Tetris : public ThreadedCanvasManipulator {
 			for( int x = 0; x < 3 ; x++ ){
 				for( int y = 0; y < 3 ; y++ ){
 					if( fall->map[x][y] != 0 ){
-						if( map_hold[ fall->x + x ][ fall->y + y +1 ] ){
+						if( map_hold[ fall->x + x ][ fall->y+1 + y +1 ] ){
 							stop = 1;
-						}else if( fall->y + y > width ){
+						}
+						if( (fall->y+1 + y) >= 32 ){
 							stop = 1;
 						}
 					}
 				}
 			}
-			if( stop == 1 ){
-			}else{
+			if( stop == 0 ){
 				fall->y++;
+			}else{
+				FallToHoldblock();
+				fall->createBlock();
 			}
 		}
 		void draw(){
@@ -104,23 +111,30 @@ class Tetris : public ThreadedCanvasManipulator {
 							case 1:
 								canvas()->SetPixel(x, y, 255, 255, 255); break;
 						}
-						cout << map[x][y];
+						//cout << map[x][y];
 					}
-					cout << endl;
+					//cout << endl;
 				}
-		cout << endl;
+		//cout << endl;
 		}
 		void drawFallblock(){
 			for(int x = 0; x < 3 ; x++ ){
 				for(int y = 0; y < 3 ; y++ ){
-					this->map[ fall->x + x ][ fall->y + y ] = this->fall->map[x][y];
+					this->map[ fall->x + x ][ fall->y + y ] |= this->fall->map[x][y];
 				}
 			}
 		}
 		void drawHoldblock(){
 			for(int x = 0; x < 3 ; x++ ){
 				for(int y = 0; y < 3 ; y++ ){
-					this->map[ fall->x + x ][ fall->y + y ] = this->fall->map[x][y];
+					this->map[ fall->x + x ][ fall->y + y ] |= this->map_hold[x][y];
+				}
+			}
+		}
+		void FallToHoldblock(){
+			for(int x = 0; x < 3 ; x++ ){
+				for(int y = 0; y < 3 ; y++ ){
+					this->map_hold[ fall->x + x ][ fall->y + y ] |= this->fall->map[x][y];
 				}
 			}
 		}
@@ -142,6 +156,8 @@ static void DrawOnCanvas(Canvas *canvas) {
 }
 
 int main(int argc, char *argv[]) {
+	//init_device();
+
 	signal(SIGTERM, InterruptHandler);
 	signal(SIGINT, InterruptHandler);
 
