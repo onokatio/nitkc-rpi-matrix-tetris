@@ -120,7 +120,10 @@ class Tetris : public ThreadedCanvasManipulator {
 		}
 		void move(){
 			unsigned char read = read_port(2);
-			cout << int(read) << endl;
+			//cout << int(read) << endl;
+			if(~read & 0x01){
+				fall->x++;
+			}
 		}
 		void checkFall(){
 			int stop = 0;
