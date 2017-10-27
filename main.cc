@@ -51,7 +51,7 @@ class Tetris : public ThreadedCanvasManipulator {
 	public:
 		const static int width = 32;
 		const static int height = 32;
-		int map[34][34] = {};
+		int map[32][32] = {};
 		int map_hold[32][32] = {};
 		Fallblock *fall = new Fallblock;
 		int frame = 0;
@@ -86,9 +86,15 @@ class Tetris : public ThreadedCanvasManipulator {
 					if( fall->map[x][y] != 0 ){
 						if( map_hold[ fall->x + x ][ fall->y + y +1 ] ){
 							stop = 1;
+						}else if( fall->y + y > width ){
+							stop = 1;
 						}
 					}
 				}
+			}
+			if( stop == 1 ){
+			}else{
+				fall->y++;
 			}
 		}
 		void draw(){
