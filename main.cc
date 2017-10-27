@@ -1,4 +1,5 @@
 #include "led-matrix.h"
+#include "threaded-canvas-manipulator.h"
 
 #include <unistd.h>
 #include <math.h>
@@ -11,6 +12,7 @@ using namespace std;
 using rgb_matrix::GPIO;
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
+using namespace rgb_matrix;
 
 class Fallblock {
 	private:
@@ -18,59 +20,54 @@ class Fallblock {
 		const static int width = 3;
 		const static int height = 3;
 		int x,y;
-		vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
+		//vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
+		int map[3][3] = {};
 		Fallblock(){
-			this->map[0] = {0,1,0};
-			this->map[1] = {0,1,0};
-			this->map[2] = {1,1,1};
+			this->map[0][0] = 0; this->map[0][1] = 1; this->map[0][2] = 0;
+			this->map[1][0] = 1; this->map[1][1] = 1; this->map[1][2] = 1;
+			this->map[2][0] = 0; this->map[2][1] = 1; this->map[2][2] = 0;
 		}
 };
-class Tetris {
+class Tetris : public ThreadedCanvasManipulator {
 	private:
 	public:
 		const static int width = 32;
 		const static int height = 32;
-		vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
-		Canvas *canvas;
+		//vector<vector<int> > map = vector<vector<int> >(32,vector<int>(32,1));
+		int map[32][32] = {};
+		//Canvas *canvas;
 		Fallblock *fall = new Fallblock;
 		
-		Tetris(Canvas *canvas){
-			//this->map = {};
-			this->canvas = canvas;
-			this->map[0][1] = 1;
-			this->map[1][0] = 1;
-			this->map[1][2] = 1;
-			this->map[2][1] = 1;
-			for(int i = 0; i < 2; i++){
-				draw();
-				usleep(1 * 1000 * 1000);
-			}
-		}
-		void draw(){
+		Tetris(Canvas *canvas) : ThreadedCanvasManipulator(canvas) {}
+		virtual void Run(){
 			int red,green,blue;
-			for(int x = 0; x < this->width ; x++){
-				for(int y = 0; y < this->height ; y++){
-					switch(this->fall->map[x][y]){
-						case 0:
-							red   = 0;
-							green = 0;
-							blue  = 0;
-							break;
-						case 1:
-							red   = 255;
-							green = 255;
-							blue  = 255;
-							break;
-						case 2:
-							red   = 255;
-							green = 0;
-							blue  = 0;
-							break;
+			this->map[0][0] = 1; this->map[0][1] = 0; this->map[0][2] = 0;
+			this->map[1][0] = 1; this->map[1][1] = 0; this->map[1][2] = 0;
+			this->map[2][0] = 1; this->map[2][1] = 1; this->map[2][2] = 1;
+			while(running()){
+				for(int x = 0; x < 32 ; x++){
+					for(int y = 0; y < 32 ; y++){
+						switch(this->map[x][y]){
+							case 0:
+								red   = 0;
+								green = 0;
+								blue  = 0;
+								break;
+							case 1:
+								red   = 255;
+								green = 255;
+								blue  = 255;
+								break;
+							case 2:
+								red   = 255;
+								green = 0;
+								blue  = 0;
+								break;
+						}
+						canvas()->SetPixel(y, x, red, green, blue);
 					}
-					//this->canvas->SetPixel(x, y, red, green, blue);
-					this->canvas->SetPixel(x, y, 255, 255, 255);
-					cout << x << " " << y << endl;
 				}
+				usleep(15 * 1000);
 			}
 		}
 };
@@ -84,24 +81,25 @@ static void DrawOnCanvas(Canvas *canvas) {
 }
 
 int main(int argc, char *argv[]) {
-  RGBMatrix::Options defaults;
-  defaults.hardware_mapping = "regular";
-  defaults.rows = 32;
-  defaults.chain_length = 1;
-  defaults.parallel = 1;
-  //defaults.show_refresh_rate = true;
-  Canvas *canvas = rgb_matrix::CreateMatrixFromFlags(&argc, &argv, &defaults);
-  if (canvas == NULL)
-    return 1;
+  RGBMatrix::Options matrix_options;
+	rgb_matrix::RuntimeOptions runtime_opt;
 
-  signal(SIGTERM, InterruptHandler);
-  signal(SIGINT, InterruptHandler);
+  matrix_options.hardware_mapping = "regular";
+  matrix_options.rows = 32;
+  matrix_options.chain_length = 1;
+  matrix_options.parallel = 1;
+  matrix_options.show_refresh_rate = true;
+	matrix_options.rows = 32;
 
-  		//DrawOnCanvas(canvas);    // Using the canvas.
+	
+	RGBMatrix *matrix = CreateMatrixFromOptions(matrix_options, runtime_opt);
+	Tetris *tetris = new Tetris(matrix);
+	tetris->Start();
+	usleep(2 * 1000 * 1000);
+	tetris->Stop();
 
-	Tetris *tetris = new Tetris(canvas);
-  canvas->Clear();
-  delete canvas;
+  //canvas->Clear();
+  //delete canvas;
 
   return 0;
 }
