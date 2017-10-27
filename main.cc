@@ -33,7 +33,6 @@ class Fallblock {
 			this->map[0][2] = 0; this->map[1][2] = 1; this->map[2][2] = 0;
 		}
 		void roll90(){
-			cout << "roll!!" << endl;
 			int old_map[3][3] = {};
 			for(int x = 0 ; x < 3 ; x++ ){
 				for(int y = 0 ; y < 3 ; y++ ){
@@ -43,9 +42,7 @@ class Fallblock {
 			for(int x = 0 ; x < 3 ; x++ ){
 				for(int y = 0 ; y < 3 ; y++ ){
 					map[x][y] = old_map[2-y][x];
-					cout << map[x][y];
 				}
-				cout << endl;
 			}
 		}
 };
@@ -55,6 +52,7 @@ class Tetris : public ThreadedCanvasManipulator {
 		const static int width = 32;
 		const static int height = 32;
 		int map[32][32] = {};
+		int map_hold[32][32] = {};
 		Fallblock *fall = new Fallblock;
 		int frame = 0;
 		time_t prev_time = time(0);
@@ -75,7 +73,8 @@ class Tetris : public ThreadedCanvasManipulator {
 				half_sec();
 				clearMap();
 				canvas()->Clear();
-				setFallblock();
+				drawFallblock();
+				drawHoldblock();
 				draw();
 				usleep(15 * 1000);
 			}
@@ -87,15 +86,23 @@ class Tetris : public ThreadedCanvasManipulator {
 							case 1:
 								canvas()->SetPixel(x, y, 255, 255, 255); break;
 						}
+						cout << map[x][y];
 					}
+					cout << endl;
 				}
+		cout << endl;
 		}
-		void setFallblock(){
-			int fallx = this->fall->x;
-			int fally = this->fall->y;
+		void drawFallblock(){
 			for(int x = 0; x < 3 ; x++ ){
 				for(int y = 0; y < 3 ; y++ ){
-					this->map[ fallx + x ][ fally + y ] = this->fall->map[x][y];
+					this->map[ fall->x + x ][ fall->y + y ] = this->fall->map[x][y];
+				}
+			}
+		}
+		void drawHoldblock(){
+			for(int x = 0; x < 3 ; x++ ){
+				for(int y = 0; y < 3 ; y++ ){
+					this->map[ fall->x + x ][ fall->y + y ] = this->fall->map[x][y];
 				}
 			}
 		}
