@@ -65,9 +65,8 @@ class Tetris : public ThreadedCanvasManipulator {
 		}
 		void half_sec(){
 			if( frame > 10 ){
-				//if(fall->y+3 < height) fall->y++;
+				if( frame % 3 == 1) fall->roll90();
 				checkFall();
-				//fall->roll90();
 				frame = 0;
 			}
 		}
@@ -88,7 +87,7 @@ class Tetris : public ThreadedCanvasManipulator {
 			for( int x = 0; x < 3 ; x++ ){
 				for( int y = 0; y < 3 ; y++ ){
 					if( fall->map[x][y] != 0 ){
-						if( map_hold[ fall->x + x ][ fall->y+1 + y +1 ] ){
+						if( map_hold[ fall->x + x ][ fall->y + y +1 ] == 1){
 							stop = 1;
 						}
 						if( (fall->y+1 + y) >= 32 ){
@@ -102,6 +101,7 @@ class Tetris : public ThreadedCanvasManipulator {
 			}else{
 				FallToHoldblock();
 				fall->createBlock();
+				stop = 0;
 			}
 		}
 		void draw(){
@@ -125,9 +125,9 @@ class Tetris : public ThreadedCanvasManipulator {
 			}
 		}
 		void drawHoldblock(){
-			for(int x = 0; x < 3 ; x++ ){
-				for(int y = 0; y < 3 ; y++ ){
-					this->map[ fall->x + x ][ fall->y + y ] |= this->map_hold[x][y];
+			for(int x = 0; x < 32 ; x++ ){
+				for(int y = 0; y < 32 ; y++ ){
+					this->map[x][y] |= this->map_hold[x][y];
 				}
 			}
 		}
@@ -136,6 +136,12 @@ class Tetris : public ThreadedCanvasManipulator {
 				for(int y = 0; y < 3 ; y++ ){
 					this->map_hold[ fall->x + x ][ fall->y + y ] |= this->fall->map[x][y];
 				}
+			}
+			for(int x = 0; x < 32 ; x++ ){
+				for(int y = 0; y < 32 ; y++ ){
+					//cout << map_hold[x][y];
+				}
+				//cout << endl;
 			}
 		}
 		void clearMap(){
