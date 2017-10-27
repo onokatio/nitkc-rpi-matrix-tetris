@@ -19,6 +19,11 @@ class Fallblock {
 		const static int height = 3;
 		int x,y;
 		vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
+		Fallblock(){
+			this->map[0] = {0,1,0};
+			this->map[1] = {0,1,0};
+			this->map[2] = {1,1,1};
+		}
 };
 class Tetris {
 	private:
@@ -26,10 +31,47 @@ class Tetris {
 		const static int width = 32;
 		const static int height = 32;
 		vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
+		Canvas *canvas;
 		Fallblock *fall = new Fallblock;
-		Tetris(){
-			fall->map[0][0] = 1;
-			cout << 1;
+		
+		Tetris(Canvas *canvas){
+			//this->map = {};
+			this->canvas = canvas;
+			this->map[0][1] = 1;
+			this->map[1][0] = 1;
+			this->map[1][2] = 1;
+			this->map[2][1] = 1;
+			for(int i = 0; i < 2; i++){
+				draw();
+				usleep(1 * 1000 * 1000);
+			}
+		}
+		void draw(){
+			int red,green,blue;
+			for(int x = 0; x < this->width ; x++){
+				for(int y = 0; y < this->height ; y++){
+					switch(this->fall->map[x][y]){
+						case 0:
+							red   = 0;
+							green = 0;
+							blue  = 0;
+							break;
+						case 1:
+							red   = 255;
+							green = 255;
+							blue  = 255;
+							break;
+						case 2:
+							red   = 255;
+							green = 0;
+							blue  = 0;
+							break;
+					}
+					//this->canvas->SetPixel(x, y, red, green, blue);
+					this->canvas->SetPixel(x, y, 255, 255, 255);
+					cout << x << " " << y << endl;
+				}
+			}
 		}
 };
 
@@ -39,14 +81,6 @@ static void InterruptHandler(int signo) {
 }
 
 static void DrawOnCanvas(Canvas *canvas) {
-  int x,y;
-
-	while(!interrupt_received){
- 	 	    canvas->SetPixel(0,0,255, 255, 255);
- 	 	    usleep(1 * 1000 * 1000);
- 	 	    canvas->SetPixel(0,0,0, 0, 0);
- 	 	    usleep(1 * 1000 * 1000);
-	}
 }
 
 int main(int argc, char *argv[]) {
@@ -63,8 +97,9 @@ int main(int argc, char *argv[]) {
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
 
-  DrawOnCanvas(canvas);    // Using the canvas.
+  		//DrawOnCanvas(canvas);    // Using the canvas.
 
+	Tetris *tetris = new Tetris(canvas);
   canvas->Clear();
   delete canvas;
 
