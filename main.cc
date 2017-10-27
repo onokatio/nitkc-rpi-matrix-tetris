@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <vector>
 #include <iostream>
+#include <sys/time.h>
 
 using namespace std;
 using rgb_matrix::GPIO;
@@ -19,13 +20,33 @@ class Fallblock {
 	public:
 		const static int width = 3;
 		const static int height = 3;
-		int x,y;
+		int x = 0;
+		int y = 0;
 		//vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
 		int map[3][3] = {};
 		Fallblock(){
-			this->map[0][0] = 0; this->map[0][1] = 1; this->map[0][2] = 0;
-			this->map[1][0] = 1; this->map[1][1] = 1; this->map[1][2] = 1;
-			this->map[2][0] = 0; this->map[2][1] = 1; this->map[2][2] = 0;
+			createBlock();
+		}
+		void createBlock(){
+			this->map[0][0] = 1; this->map[1][0] = 1; this->map[2][0] = 1;
+			this->map[0][1] = 0; this->map[1][1] = 1; this->map[2][1] = 0;
+			this->map[0][2] = 0; this->map[1][2] = 1; this->map[2][2] = 0;
+		}
+		void roll90(){
+			cout << "roll!!" << endl;
+			int old_map[3][3] = {};
+			for(int x = 0 ; x < 3 ; x++ ){
+				for(int y = 0 ; y < 3 ; y++ ){
+					old_map[x][y] = map[x][y];
+				}
+			}
+			for(int x = 0 ; x < 3 ; x++ ){
+				for(int y = 0 ; y < 3 ; y++ ){
+					map[x][y] = old_map[2-y][x];
+					cout << map[x][y];
+				}
+				cout << endl;
+			}
 		}
 };
 class Tetris : public ThreadedCanvasManipulator {
@@ -33,41 +54,56 @@ class Tetris : public ThreadedCanvasManipulator {
 	public:
 		const static int width = 32;
 		const static int height = 32;
-		//vector<vector<int> > map = vector<vector<int> >(32,vector<int>(32,1));
 		int map[32][32] = {};
-		//Canvas *canvas;
 		Fallblock *fall = new Fallblock;
+		int frame = 0;
+		time_t prev_time = time(0);
 		
-		Tetris(Canvas *canvas) : ThreadedCanvasManipulator(canvas) {}
+		Tetris(Canvas *canvas) : ThreadedCanvasManipulator(canvas) {
+			this->prev_time = time(0);
+		}
+		void half_sec(){
+			if( frame > 10 ){
+				if(fall->y+3 < height) fall->y++;
+				fall->roll90();
+				frame = 0;
+			}
+		}
 		virtual void Run(){
-			int red,green,blue;
-			this->map[0][0] = 1; this->map[0][1] = 0; this->map[0][2] = 0;
-			this->map[1][0] = 1; this->map[1][1] = 0; this->map[1][2] = 0;
-			this->map[2][0] = 1; this->map[2][1] = 1; this->map[2][2] = 1;
 			while(running()){
+				frame++;
+				half_sec();
+				clearMap();
+				canvas()->Clear();
+				setFallblock();
+				draw();
+				usleep(15 * 1000);
+			}
+		}
+		void draw(){
 				for(int x = 0; x < 32 ; x++){
 					for(int y = 0; y < 32 ; y++){
 						switch(this->map[x][y]){
-							case 0:
-								red   = 0;
-								green = 0;
-								blue  = 0;
-								break;
 							case 1:
-								red   = 255;
-								green = 255;
-								blue  = 255;
-								break;
-							case 2:
-								red   = 255;
-								green = 0;
-								blue  = 0;
-								break;
+								canvas()->SetPixel(x, y, 255, 255, 255); break;
 						}
-						canvas()->SetPixel(y, x, red, green, blue);
 					}
 				}
-				usleep(15 * 1000);
+		}
+		void setFallblock(){
+			int fallx = this->fall->x;
+			int fally = this->fall->y;
+			for(int x = 0; x < 3 ; x++ ){
+				for(int y = 0; y < 3 ; y++ ){
+					this->map[ fallx + x ][ fally + y ] = this->fall->map[x][y];
+				}
+			}
+		}
+		void clearMap(){
+			for(int x = 0; x < this->width ; x++ ){
+				for(int y = 0; y < this->width ; y++ ){
+					this->map[x][y] = 0;
+				}
 			}
 		}
 };
@@ -81,6 +117,9 @@ static void DrawOnCanvas(Canvas *canvas) {
 }
 
 int main(int argc, char *argv[]) {
+	signal(SIGTERM, InterruptHandler);
+	signal(SIGINT, InterruptHandler);
+
   RGBMatrix::Options matrix_options;
 	rgb_matrix::RuntimeOptions runtime_opt;
 
@@ -88,18 +127,17 @@ int main(int argc, char *argv[]) {
   matrix_options.rows = 32;
   matrix_options.chain_length = 1;
   matrix_options.parallel = 1;
-  matrix_options.show_refresh_rate = true;
+  matrix_options.show_refresh_rate = false;
 	matrix_options.rows = 32;
 
 	
 	RGBMatrix *matrix = CreateMatrixFromOptions(matrix_options, runtime_opt);
 	Tetris *tetris = new Tetris(matrix);
 	tetris->Start();
-	usleep(2 * 1000 * 1000);
-	tetris->Stop();
 
-  //canvas->Clear();
-  //delete canvas;
+	while(!interrupt_received){}
+
+	tetris->Stop();
 
   return 0;
 }
