@@ -21,13 +21,15 @@ extern "C"{
 class Fallblock {
 	private:
 	public:
-		const static int width = 3;
-		const static int height = 3;
+		const static int width = 4;
+		const static int height = 4;
+		int real_width = 0;
+		int real_height = 0;
 		int x = 0;
 		int y = 0;
 		int prev_color = 0;
 		//vector<vector<int> > map = vector<vector<int> >(width,vector<int>(height,0));
-		int map[3][3] = {};
+		int map[width][height] = {};
 		Fallblock(){
 			createBlock();
 		}
@@ -39,51 +41,57 @@ class Fallblock {
 			prev_color++;
 			switch(rand() % 5){
 				case 0:
-					this->map[0][0] = c; this->map[1][0] = c; this->map[2][0] = c;
-					this->map[0][1] = 0; this->map[1][1] = c; this->map[2][1] = 0;
-					this->map[0][2] = 0; this->map[1][2] = c; this->map[2][2] = 0;
+					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = c;
+					map[0][1] = 0; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = 0; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 1:
-					this->map[0][0] = 0; this->map[1][0] = c; this->map[2][0] = 0;
-					this->map[0][1] = c; this->map[1][1] = c; this->map[2][1] = c;
-					this->map[0][2] = 0; this->map[1][2] = c; this->map[2][2] = 0;
+					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = 0;
+					map[0][1] = 0; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = 0; map[1][3] = c; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 2:
-					this->map[0][0] = c; this->map[1][0] = c; this->map[2][0] = c;
-					this->map[0][1] = c; this->map[1][1] = c; this->map[2][1] = c;
-					this->map[0][2] = c; this->map[1][2] = c; this->map[2][2] = c;
+					map[0][0] = 0; map[1][0] = c; map[2][0] = 0; map[3][0] = 0;
+					map[0][1] = c; map[1][1] = c; map[2][1] = c; map[3][1] = 0;
+					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 3:
-					this->map[0][0] = c; this->map[1][0] = 0; this->map[2][0] = 0;
-					this->map[0][1] = c; this->map[1][1] = 0; this->map[2][1] = 0;
-					this->map[0][2] = c; this->map[1][2] = c; this->map[2][2] = c;
+					map[0][0] = 0; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
+					map[0][1] = c; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = c; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = c; map[1][3] = c; map[2][3] = c; map[3][3] = 0;
 					break;
 				case 4:
-					this->map[0][0] = 0; this->map[1][0] = c; this->map[2][0] = 0;
-					this->map[0][1] = 0; this->map[1][1] = c; this->map[2][1] = 0;
-					this->map[0][2] = 0; this->map[1][2] = c; this->map[2][2] = 0;
+					map[0][0] = c; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
+					map[0][1] = c; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 5:
-					this->map[0][0] = c; this->map[1][0] = 0; this->map[2][0] = 0;
-					this->map[0][1] = c; this->map[1][1] = c; this->map[2][1] = 0;
-					this->map[0][2] = 0; this->map[1][2] = c; this->map[2][2] = 0;
+					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = 0;
+					map[0][1] = 0; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = 0; map[1][3] = c; map[2][3] = 0; map[3][3] = 0;
 					break;
 			}
 		}
 		void roll90(){
-			int old_map[3][3] = {};
-			for(int x = 0 ; x < 3 ; x++ ){
-				for(int y = 0 ; y < 3 ; y++ ){
+			int old_map[width][height] = {};
+			for(int x = 0 ; x < width ; x++ ){
+				for(int y = 0 ; y < height ; y++ ){
 					old_map[x][y] = map[x][y];
 				}
 			}
-			for(int x = 0 ; x < 3 ; x++ ){
-				for(int y = 0 ; y < 3 ; y++ ){
-					map[x][y] = old_map[2-y][x];
+			for(int x = 0 ; x < width ; x++ ){
+				for(int y = 0 ; y < height ; y++ ){
+					map[x][y] = old_map[(height-1)-y][x];
 				}
 			}
 		}
-		void roll90-re(){
+		void roll90left(){
 			roll90();
 			roll90();
 			roll90();
@@ -99,12 +107,16 @@ class Tetris : public ThreadedCanvasManipulator {
 		Fallblock *fall = new Fallblock;
 		int frame = 0;
 		time_t prev_time = time(0);
+		int button[32] = {};
 		
 		Tetris(Canvas *canvas) : ThreadedCanvasManipulator(canvas) {
 			this->prev_time = time(0);
+			for(int y = 0; y < height ; y++ ){
+				map_hold[20][y] = 1;
+			}
 		}
 		void half_sec(){
-			if( frame > 5 ){
+			if( frame > 30 ){
 				fall->y++;
 				if( checkFall() == 1 ){
 					fall->y--;
@@ -124,32 +136,60 @@ class Tetris : public ThreadedCanvasManipulator {
 				draw();
 				half_sec();
 				move();
+				remove();
 				usleep(15 * 1000);
+			}
+		}
+		void remove(){
+			int skip = 0;
+			for(int y = 0; y < height ; y++ ){
+				for(int x = 0; x < 20 ; x++ ){
+					if(map[x][y] == 0){
+						skip = 1;
+					}
+				}
+				if(skip == 0){
+					cout << y;
+					for(int ny = y; ny > 0 ; ny-- ){
+						for(int x = 0; x < 20 ; x++ ){
+							map_hold[x][ny] = map_hold[x][ny-1];
+						}
+					}
+				}else{
+					skip = 0;
+				}
 			}
 		}
 		void move(){
 			unsigned char read = read_port(2);
-			if(~read & 0x01){
-				fall->x++;
-				if( checkFall() == 1 ) fall->x--;
-			}
-			if(~read & 0x02){
-				//stack
-			}
-			if(~read & 0x04){
-				fall->x--;
-				if( checkFall() == 1 ) fall->x++;
-			}
-			if(~read & 0x08){
-				fall->roll90();
-				if( checkFall() == 1 ) fall->roll-rev90();
-			}
-			if(~read & 0x16){
-				//fall-fast
-			}
-			if(~read & 0x32){
-				fall->roll90-rev();
-				if( checkFall() == 1 ) fall->roll90();
+			for(int i = 0; i < 6 ; i++){
+				if(~read & (0x01 << i)){
+					if(button[i] > 80){
+						button[i] = 1;
+						switch(i){
+							case 0: fall->x++;break;
+							case 1: break;
+							case 2: fall->x--;break;
+							case 3: fall->roll90left();break;
+							case 4: fall->y++;button[i] = 100;break;
+							case 5: fall->roll90();break;
+						}
+						if(checkFall() == 1){
+							switch(i){
+								case 0: fall->x--;break;
+								case 1: break;
+								case 2: fall->x++;break;
+								case 3: fall->roll90();break;
+								case 4: fall->y--;break;
+								case 5: fall->roll90left();break;
+							}
+						}
+					}else{
+						button[i]+=button[i];
+					}
+				}else{
+					button[i] = 90;
+				}
 			}
 		}
 		int checkFall(){
@@ -159,39 +199,20 @@ class Tetris : public ThreadedCanvasManipulator {
 					if( fall->map[x][y] != 0 ){
 						//if( map_hold[ fall->x + x ][ fall->y + y +1 ] != 0){
 						if( map_hold[ fall->x + x ][ fall->y + y ] != 0){
-							//stop = 1;
 							return 1;
 						}
-						//if( (fall->y+1 + y) >= 32 ){
 						if( (fall->y + y) >= height ){
-							//stop = 1;
 							return 1;
 						}
 						if( (fall->x + x) >= width ){
 							return 1;
 						}
-						if( fall->x < 0){
-							return 1;
-						}
-						if( fall->y < 0){
+						if( (fall->x + x) < 0){
 							return 1;
 						}
 					}
 				}
 			}
-			/*
-			if( stop == 0 ){
-				fall->y++;
-			}else{
-				if( fall->y == 0 ){
-					exit(0);
-				}else{
-					FallToHoldblock();
-					fall->createBlock();
-					stop = 0;
-				}
-			}
-			*/
 			return 0;
 		}
 		void draw(){
@@ -215,21 +236,21 @@ class Tetris : public ThreadedCanvasManipulator {
 		}
 		void drawFallblock(){
 			for(int x = 0; x < fall->width ; x++ ){
-				for(int y = 0; y < fall-height ; y++ ){
+				for(int y = 0; y < fall->height ; y++ ){
 					this->map[ fall->x + x ][ fall->y + y ] |= this->fall->map[x][y];
 				}
 			}
 		}
 		void drawHoldblock(){
-			for(int x = 0; x < fall->width ; x++ ){
-				for(int y = 0; y < fall-height ; y++ ){
+			for(int x = 0; x < width ; x++ ){
+				for(int y = 0; y < height ; y++ ){
 					this->map[x][y] |= this->map_hold[x][y];
 				}
 			}
 		}
 		void FallToHoldblock(){
 			for(int x = 0; x < fall->width ; x++ ){
-				for(int y = 0; y < fall-height ; y++ ){
+				for(int y = 0; y < fall->height ; y++ ){
 					this->map_hold[ fall->x + x ][ fall->y + y ] |= this->fall->map[x][y];
 				}
 			}
