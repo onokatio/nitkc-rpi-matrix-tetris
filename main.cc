@@ -47,22 +47,22 @@ class Fallblock {
 					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 1:
-					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = 0;
-					map[0][1] = 0; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
-					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = 0; map[1][3] = c; map[2][3] = 0; map[3][3] = 0;
+					map[0][0] = c; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
+					map[0][1] = c; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = c; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 2:
-					map[0][0] = 0; map[1][0] = c; map[2][0] = 0; map[3][0] = 0;
-					map[0][1] = c; map[1][1] = c; map[2][1] = c; map[3][1] = 0;
-					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
+					map[0][0] = c; map[1][0] = c; map[2][0] = 0; map[3][0] = 0;
+					map[0][1] = c; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
+					map[0][2] = 0; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
 					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
 					break;
 				case 3:
 					map[0][0] = 0; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
-					map[0][1] = c; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0;
+					map[0][1] = 0; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0;
 					map[0][2] = c; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = c; map[1][3] = c; map[2][3] = c; map[3][3] = 0;
+					map[0][3] = c; map[1][3] = c; map[2][3] = c; map[3][3] = c;
 					break;
 				case 4:
 					map[0][0] = c; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
@@ -199,19 +199,32 @@ class Tetris : public ThreadedCanvasManipulator {
 					if( fall->map[x][y] != 0 ){
 						//if( map_hold[ fall->x + x ][ fall->y + y +1 ] != 0){
 						if( map_hold[ fall->x + x ][ fall->y + y ] != 0){
+							if(fall->y < 3){
+								exit(0);
+							}
 							return 1;
 						}
 						if( (fall->y + y) >= height ){
+							stop = 1;
 							return 1;
 						}
 						if( (fall->x + x) >= width ){
+							stop = 1;
 							return 1;
 						}
 						if( (fall->x + x) < 0){
+							stop = 1;
 							return 1;
 						}
 					}
 				}
+			}
+			if(stop == 1){
+				if(fall->y == 0){
+					cout << "game over" << endl;
+					exit(0);
+				}
+				return 1;
 			}
 			return 0;
 		}
