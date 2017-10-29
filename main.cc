@@ -40,35 +40,45 @@ class Fallblock {
 			int c = prev_color % 4 + 1;
 			prev_color++;
 			switch(rand() % 5){
-				case 0:
-					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = c;
-					map[0][1] = 0; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0;
-					map[0][2] = 0; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
+				case 0: // write I
+					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = c; map[4][0] = c; map[5][0] = c;
+					map[0][1] = 0; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0; map[4][1] = 0; map[5][1] = 0;
+					map[0][2] = 0; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0; map[4][2] = 0; map[5][2] = 0;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0; map[4][3] = 0; map[5][3] = 0;
+					map[0][4] = 0; map[1][4] = 0; map[2][4] = 0; map[3][4] = 0; map[4][4] = 0; map[5][4] = 0;
+					map[0][5] = 0; map[1][5] = 0; map[2][5] = 0; map[3][5] = 0; map[4][5] = 0; map[5][5] = 0;
 					break;
-				case 1:
-					map[0][0] = c; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
-					map[0][1] = c; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
-					map[0][2] = c; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
+				case 1: // write T
+					map[0][0] = 0; map[1][0] = 0; map[2][0] = c; map[3][0] = c; map[4][0] = 0; map[5][0] = 0;
+					map[0][1] = 0; map[1][1] = 0; map[2][1] = c; map[3][1] = c; map[4][1] = 0; map[5][1] = 0;
+					map[0][2] = 0; map[1][2] = 0; map[2][2] = c; map[3][2] = c; map[4][2] = c; map[5][2] = c;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = c; map[3][3] = c; map[4][3] = c; map[5][3] = c;
+					map[0][4] = 0; map[1][4] = 0; map[2][4] = c; map[3][4] = c; map[4][4] = 0; map[5][4] = 0;
+					map[0][5] = 0; map[1][5] = 0; map[2][5] = c; map[3][5] = c; map[4][5] = 0; map[5][5] = 0;
 					break;
-				case 2:
-					map[0][0] = c; map[1][0] = c; map[2][0] = 0; map[3][0] = 0;
-					map[0][1] = c; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
-					map[0][2] = 0; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
+				case 2: //write rect
+					map[0][0] = 0; map[1][0] = c; map[2][0] = c; map[3][0] = c; map[4][0] = c; map[5][0] = 0;
+					map[0][1] = 0; map[1][1] = c; map[2][1] = c; map[3][1] = c; map[4][1] = c; map[5][1] = 0;
+					map[0][2] = 0; map[1][2] = c; map[2][2] = c; map[3][2] = c; map[4][2] = c; map[5][2] = 0;
+					map[0][3] = 0; map[1][3] = c; map[2][3] = c; map[3][3] = c; map[4][3] = c; map[5][3] = 0;
+					map[0][4] = 0; map[1][4] = 0; map[2][4] = 0; map[3][4] = 0; map[4][4] = 0; map[5][4] = 0;
+					map[0][5] = 0; map[1][5] = 0; map[2][5] = 0; map[3][5] = 0; map[4][5] = 0; map[5][5] = 0;
 					break;
-				case 3:
-					map[0][0] = 0; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
-					map[0][1] = 0; map[1][1] = 0; map[2][1] = 0; map[3][1] = 0;
-					map[0][2] = c; map[1][2] = 0; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = c; map[1][3] = c; map[2][3] = c; map[3][3] = c;
+				case 3: // write L
+					map[0][0] = 0; map[1][0] = 0; map[2][0] = c; map[3][0] = c; map[4][0] = 0; map[5][0] = 0;
+					map[0][1] = 0; map[1][1] = 0; map[2][1] = c; map[3][1] = c; map[4][1] = 0; map[5][1] = 0;
+					map[0][2] = 0; map[1][2] = 0; map[2][2] = c; map[3][2] = c; map[4][2] = 0; map[5][2] = 0;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = c; map[3][3] = c; map[4][3] = 0; map[5][3] = 0;
+					map[0][4] = 0; map[1][4] = 0; map[2][4] = c; map[3][4] = c; map[4][4] = c; map[5][4] = c;
+					map[0][5] = 0; map[1][5] = 0; map[2][5] = c; map[3][5] = c; map[4][5] = c; map[5][5] = c;
 					break;
-				case 4:
-					map[0][0] = c; map[1][0] = 0; map[2][0] = 0; map[3][0] = 0;
-					map[0][1] = c; map[1][1] = c; map[2][1] = 0; map[3][1] = 0;
-					map[0][2] = 0; map[1][2] = c; map[2][2] = 0; map[3][2] = 0;
-					map[0][3] = 0; map[1][3] = 0; map[2][3] = 0; map[3][3] = 0;
+				case 4: // write lightning
+					map[0][0] = 0; map[1][0] = 0; map[2][0] = c; map[3][0] = c; map[4][0] = 0; map[5][0] = 0;
+					map[0][1] = 0; map[1][1] = 0; map[2][1] = c; map[3][1] = c; map[4][1] = 0; map[5][1] = 0;
+					map[0][2] = 0; map[1][2] = 0; map[2][2] = c; map[3][2] = c; map[4][2] = c; map[5][2] = c;
+					map[0][3] = 0; map[1][3] = 0; map[2][3] = c; map[3][3] = c; map[4][3] = c; map[5][3] = c;
+					map[0][4] = 0; map[1][4] = 0; map[2][4] = 0; map[3][4] = 0; map[4][4] = c; map[5][4] = c;
+					map[0][5] = 0; map[1][5] = 0; map[2][5] = 0; map[3][5] = 0; map[4][5] = c; map[5][5] = c;
 					break;
 				case 5:
 					map[0][0] = c; map[1][0] = c; map[2][0] = c; map[3][0] = 0;
