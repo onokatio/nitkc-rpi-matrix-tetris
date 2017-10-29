@@ -175,18 +175,18 @@ class Tetris : public ThreadedCanvasManipulator {
 					if(button[i] > 80){
 						button[i] = 1;
 						switch(i){
-							case 0: fall->x++;break;
+							case 0: fall->x+=2;break;
 							case 1: break;
-							case 2: fall->x--;break;
+							case 2: fall->x-=2;break;
 							case 3: fall->roll90left();break;
 							case 4: fall->y++;button[i] = 100;break;
 							case 5: fall->roll90();break;
 						}
 						if(checkFall() == 1){
 							switch(i){
-								case 0: fall->x--;break;
+								case 0: fall->x-=2;break;
 								case 1: break;
-								case 2: fall->x++;break;
+								case 2: fall->x+=2;break;
 								case 3: fall->roll90();break;
 								case 4: fall->y--;break;
 								case 5: fall->roll90left();break;
