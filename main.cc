@@ -21,8 +21,8 @@ extern "C"{
 class Fallblock {
 	private:
 	public:
-		const static int width = 4;
-		const static int height = 4;
+		const static int width = 6;
+		const static int height = 6;
 		int real_width = 0;
 		int real_height = 0;
 		int x = 0;
