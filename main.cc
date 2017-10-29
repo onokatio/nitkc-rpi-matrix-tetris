@@ -133,10 +133,10 @@ class Tetris : public ThreadedCanvasManipulator {
 				canvas()->Clear();
 				drawFallblock();
 				drawHoldblock();
+				remove();
 				draw();
 				half_sec();
 				move();
-				remove();
 				usleep(15 * 1000);
 			}
 		}
