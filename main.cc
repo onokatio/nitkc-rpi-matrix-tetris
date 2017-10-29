@@ -141,7 +141,7 @@ class Tetris : public ThreadedCanvasManipulator {
 				frame++;
 				move();
 				remove();
-				//clearMap();
+				clearMap();
 				canvas()->Clear();
 				draw();
 				half_sec();
