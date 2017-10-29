@@ -37,7 +37,7 @@ class Fallblock {
 			srand((unsigned int)time(NULL));
 			x = 0;
 			y = 0;
-			int c = prev_color % 4 + 1;
+			int c = prev_color % 6 + 1;
 			prev_color++;
 			switch(rand() % 5){
 				case 0: // write I
@@ -139,14 +139,12 @@ class Tetris : public ThreadedCanvasManipulator {
 		virtual void Run(){
 			while(running()){
 				frame++;
-				clearMap();
-				canvas()->Clear();
+				move();
 				remove();
-				drawFallblock();
-				drawHoldblock();
+				//clearMap();
+				canvas()->Clear();
 				draw();
 				half_sec();
-				move();
 				usleep(15 * 1000);
 			}
 		}
@@ -239,17 +237,27 @@ class Tetris : public ThreadedCanvasManipulator {
 			return 0;
 		}
 		void draw(){
+				drawFallblock();
+				drawHoldblock();
 				for(int x = 0; x < width ; x++){
 					for(int y = 0; y < height ; y++){
 						switch(this->map[x][y]){
+							case 0:
+								canvas()->SetPixel(x, y,   0,  0,   0); break;
 							case 1:
-								canvas()->SetPixel(x, y, 255, 255, 255); break;
-							case 2:
-								canvas()->SetPixel(x, y, 255,   0,   0); break;
-							case 3:
-								canvas()->SetPixel(x, y,   0, 255,   0); break;
-							case 4:
 								canvas()->SetPixel(x, y,   0,   0, 255); break;
+							case 2:
+								canvas()->SetPixel(x, y,   0, 255,   0); break;
+							case 3:
+								canvas()->SetPixel(x, y,   0, 255, 255); break;
+							case 4:
+								canvas()->SetPixel(x, y, 255,   0,   0); break;
+							case 5:
+								canvas()->SetPixel(x, y, 255,   0, 255); break;
+							case 6:
+								canvas()->SetPixel(x, y, 255, 255,   0); break;
+							case 7:
+								canvas()->SetPixel(x, y, 255, 255, 255); break;
 						}
 						//cout << map[x][y];
 					}
